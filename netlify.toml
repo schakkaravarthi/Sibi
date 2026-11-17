@@ -1,0 +1,7 @@
+[build]
+  command = "if [ -f cashlender-package.zip.b64 ]; then base64 -d cashlender-package.zip.b64 > /tmp/cashlender.zip && unzip -oq /tmp/cashlender.zip -d .; else mkdir -p CashLender-Supabase-Netlify && printf '%s\\n' '<!doctype html><title>Cash Lender deployment setup</title><p>Deployment is being prepared.</p>' > CashLender-Supabase-Netlify/index.html; fi"
+  publish = "CashLender-Supabase-Netlify"
+
+[functions]
+  directory = "CashLender-Supabase-Netlify/netlify/functions"
+  node_bundler = "esbuild"
