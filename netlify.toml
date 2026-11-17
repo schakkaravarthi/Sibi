@@ -1,5 +1,5 @@
 [build]
-  command = "if [ -f cashlender-package.zip.b64 ]; then base64 -d cashlender-package.zip.b64 > /tmp/cashlender.zip && unzip -oq /tmp/cashlender.zip -d .; else mkdir -p CashLender-Supabase-Netlify && printf '%s\\n' '<!doctype html><title>Cash Lender deployment setup</title><p>Deployment is being prepared.</p>' > CashLender-Supabase-Netlify/index.html; fi"
+  command = "cat cashlender-package.part* > /tmp/cashlender.b64 && base64 -d /tmp/cashlender.b64 > /tmp/cashlender.zip && unzip -oq /tmp/cashlender.zip -d ."
   publish = "CashLender-Supabase-Netlify"
 
 [functions]
