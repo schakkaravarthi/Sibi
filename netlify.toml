@@ -1,5 +1,5 @@
 [build]
-  command = "cat cashlender-package.part* > /tmp/cashlender.b64 && base64 -d /tmp/cashlender.b64 > /tmp/cashlender.zip && unzip -oq /tmp/cashlender.zip -d . && sed -i 's|</head>|<style>header h1 span:first-child{color:#facc15!important;font-weight:800!important}</style></head>|' CashLender-Supabase-Netlify/index.html"
+  command = "cat cashlender-pin-v5.part* > /tmp/cashlender-pin-v5.b64 && base64 -d /tmp/cashlender-pin-v5.b64 > /tmp/cashlender-pin-v5.zip && unzip -oq /tmp/cashlender-pin-v5.zip -d ."
   publish = "CashLender-Supabase-Netlify"
 
 [functions]
