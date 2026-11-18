@@ -1,0 +1,71 @@
+from pathlib import Path
+import re
+root=Path('CashLender-Supabase-Netlify')
+p=root/'index.html'
+s=p.read_text()
+style=r'''  <style id="pin-security-styles">
+    #authGate {
+      position:fixed; inset:0; z-index:10000; display:flex; align-items:center; justify-content:center;
+      padding:24px; overflow:hidden; isolation:isolate;
+      background:
+        radial-gradient(ellipse at 16% 12%,rgba(48,132,129,.32),transparent 38%),
+        radial-gradient(ellipse at 88% 82%,rgba(18,88,92,.34),transparent 36%),
+        linear-gradient(135deg,#07151f 0%,#0d2a34 47%,#071923 100%);
+    }
+    #authGate::before, #authGate::after { content:""; position:absolute; inset:0; z-index:-1; pointer-events:none; }
+    #authGate::before {
+      opacity:.22;
+      background-image:linear-gradient(rgba(185,218,211,.10) 1px,transparent 1px),linear-gradient(90deg,rgba(185,218,211,.08) 1px,transparent 1px);
+      background-size:44px 44px; mask-image:linear-gradient(90deg,transparent,#000 28%,#000 75%,transparent);
+    }
+    #authGate::after {
+      opacity:.36;
+      background:radial-gradient(circle at 50% 50%,transparent 0 35%,rgba(1,10,17,.58) 100%);
+    }
+    .pin-panel {
+      position:relative; width:min(100%,550px); min-height:610px; display:flex; flex-direction:column; align-items:center; justify-content:center;
+      padding:44px clamp(22px,6vw,58px) 38px; overflow:hidden; text-align:center;
+      border:1px solid rgba(210,238,232,.24); border-radius:34px;
+      background:linear-gradient(145deg,rgba(28,63,70,.88),rgba(8,27,39,.93) 55%,rgba(15,45,53,.90));
+      box-shadow:0 34px 100px rgba(0,0,0,.56),inset 0 1px 0 rgba(255,255,255,.18),inset 0 -28px 80px rgba(0,0,0,.18);
+      backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px);
+      transform:perspective(1100px) rotateX(1deg);
+    }
+    .pin-panel::before { content:""; position:absolute; inset:0; pointer-events:none; border-radius:inherit; background:linear-gradient(115deg,rgba(255,255,255,.10),transparent 24%,transparent 72%,rgba(174,230,218,.07)); }
+    .pin-panel::after { content:""; position:absolute; width:140%; height:1px; top:17%; left:-20%; transform:rotate(-17deg); background:linear-gradient(90deg,transparent,rgba(218,237,226,.18),transparent); }
+    .pin-brand { position:relative; z-index:1; margin-bottom:30px; }
+    .pin-wordmark {
+      display:block; font-family:'Manrope','DM Sans',sans-serif; font-size:clamp(3.8rem,11vw,5.6rem); line-height:.94; font-weight:800;
+      letter-spacing:-.085em; padding-right:.08em;
+      color:#e7e5d7; background:linear-gradient(180deg,#fff8d7 2%,#c9c5b5 26%,#f2e4ba 48%,#8f9b9a 70%,#f0e6d0 92%);
+      -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;
+      filter:drop-shadow(0 4px 2px rgba(0,0,0,.5)) drop-shadow(0 0 18px rgba(216,190,125,.16));
+    }
+    .pin-brand-sub { margin-top:13px; color:#e2d4ad; font-size:12px; font-weight:700; letter-spacing:.23em; text-transform:uppercase; text-shadow:0 2px 8px rgba(0,0,0,.5); }
+    #loginTitle { position:relative; z-index:1; margin:0 0 10px; color:#f6f8f8; font-family:'Manrope','DM Sans',sans-serif; font-size:clamp(1.8rem,6vw,2.35rem); line-height:1.15; font-weight:800; letter-spacing:-.05em; text-shadow:0 3px 15px rgba(0,0,0,.3); }
+    .pin-subtitle { position:relative; z-index:1; color:rgba(214,231,229,.72); font-size:14px; margin-bottom:28px; }
+    .pin-visual {
+      position:relative; width:100%; height:140px; display:flex; align-items:center; justify-content:center; overflow:hidden;
+      margin:0 0 23px; border-radius:28px; border:1px solid rgba(202,231,226,.20);
+      background:linear-gradient(110deg,rgba(4,20,29,.78),rgba(9,37,45,.72));
+      box-shadow:inset 0 8px 28px rgba(0,0,0,.34),0 12px 32px rgba(0,0,0,.20);
+    }
+    .pin-network { position:absolute; inset:0; width:100%; height:100%; opacity:.96; }
+    .pin-network .route { stroke:rgba(223,210,166,.74); stroke-width:1.65; fill:none; }
+    .pin-network .node { stroke:rgba(255,247,211,.75); stroke-width:1.4; fill:#e8d5a1; filter:drop-shadow(0 0 5px rgba(236,215,159,.78)); }
+    .pin-network .node-teal { fill:#50e3d0; stroke:#b8fff4; filter:drop-shadow(0 0 7px rgba(63,235,220,.95)); }
+    .pin-network .node-blue { fill:#9ce8ed; stroke:#e5ffff; filter:drop-shadow(0 0 6px rgba(92,225,232,.9)); }
+    .pin-network .pulse { animation:pinPulse 2.6s ease-in-out infinite; transform-origin:center; }
+    .pin-network .pulse:nth-of-type(2n) { animation-delay:.65s; }
+    .pin-network .pulse:nth-of-type(3n) { animation-delay:1.25s; }
+    .pin-fingerprint { position:absolute; left:50%; top:50%; width:42px; height:48px; transform:translate(-50%,-50%); opacity:.32; filter:drop-shadow(0 0 7px rgba(199,235,222,.24)); }
+    .pin-input-wrap { position:relative; z-index:2; width:min(100%,310px); }
+    .pin-input {
+      width:100%; min-height:58px !important; border:1px solid rgba(220,234,220,.36) !important; border-radius:15px !important;
+      background:rgba(3,17,25,.72) !important; color:#fff6d7 !important; text-align:center; font-size:25px !important;
+      font-family:'Manrope',sans-serif !important; font-weight:800 !important; letter-spacing:.58em !important;
+      padding:12px 18px 12px 26px !important; box-shadow:inset 0 2px 10px rgba(0,0,0,.36),0 5px 18px rgba(0,0,0,.16) !important;
+      outline:none !important; caret-color:#69e8d1;
+    }
+    .pin-input::placeholder { color:rgba(237,229,197,.56); letter-spacing:.45em; }
+    .pin-input:focus { border-color:rgba(104,230,211,.8) !important; box-shadow:0 0 0 4px rgba(79,220,203,.12),inset 0 2px 10px rgba(0,0,0,.32) !important; }
